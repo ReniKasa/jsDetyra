@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRUD me JavaScript</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      input {
+        margin: 5px;
+        padding: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+      }
+      button {
+        margin: 2px;
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Plotesoni formen:</h3>
+
+    <form id="formular">
+      <label for="emri">
+        Emri:
+        <input type="text" id="emri" placeholder="Emri" required />
+      </label>
+
+      <label for="mbiemri">
+        Mbiemri:
+        <input type="text" id="mbiemri" placeholder="Mbiemri" />
+      </label>
+
+      <label for="email">
+        Email:
+        <input type="email" id="email" placeholder="example@gmail.com" />
+      </label>
+
+      <label for="phoneNumber">
+        Phone number:
+        <input type="text" id="phoneNumber" placeholder="06xxxxxxxx" required />
+      </label>
+
+      <button type="button" id="submit">Create</button>
+    </form>
+
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>Emri</th>
+          <th>Mbiemri</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const form = document.getElementById("formular");
+      const tableBody = document.querySelector("#userTable tbody");
+      const submitBtn = document.getElementById("submit");
+      let users = [];
+
+      submitBtn.addEventListener("click", function () {
+        const user = {
+          firstName: document.getElementById("emri").value.trim(),
+          lastName: document.getElementById("mbiemri").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          phoneNumber: document.getElementById("phoneNumber").value.trim(),
+        };
+
+        users.push(user);
+        form.reset();
+        fillTable();
+      });
+
+      function fillTable() {
+        let html = "";
+
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i];
+          html += `
+            <tr>
+              <td>${user.firstName}</td>
+              <td>${user.lastName}</td>
+              <td>${user.email}</td>
+              <td>${user.phoneNumber}</td>
+              <td>
+                <button onclick="editUser(${i})">Edit</button>
+                <button onclick="deleteUser(${i})">Delete</button>
+              </td>
+            </tr>
+          `;
+        }
+
+        tableBody.innerHTML = html;
+      }
+
+      function deleteUser(index) {
+        users.splice(index, 1);
+        fillTable();
+      }
+
+      function editUser(index) {
+        const user = users[index];
+        const row = tableBody.rows[index];
+
+        row.innerHTML = `
+          <td><input value="${user.firstName}"></td>
+          <td><input value="${user.lastName}"></td>
+          <td><input value="${user.email}"></td>
+          <td><input value="${user.phoneNumber}"></td>
+          <td>
+            <button onclick="saveUser(${index})">Save</button>
+            <button onclick="fillTable()">Cancel</button>
+          </td>
+        `;
+      }
+
+      function saveUser(index) {
+        const row = tableBody.rows[index];
+        const inputs = row.querySelectorAll("input");
+
+        users[index] = {
+          firstName: inputs[0].value.trim(),
+          lastName: inputs[1].value.trim(),
+          email: inputs[2].value.trim(),
+          phoneNumber: inputs[3].value.trim(),
+        };
+
+        fillTable();
+      }
+    </script>
+  </body>
+</html>
